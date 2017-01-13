@@ -1,11 +1,6 @@
 <?php
 
 	require_once('includes/load.php');
-	
-	$template->set(array(
-		'common' => 'main.tpl',
-		'body' => 'list.tpl'
-	));
 
 	$template->vars(array(
 		'PAGE_VAR' => 'this is a page variable',
@@ -13,14 +8,14 @@
 	));
 
 	for ($i = 1; $i <= 10; $i++) {
-	    $template->blocks('LIST', array(
+		$template->blocks('LIST', array(
 			'ID' => $i,
 			'TITLE' => 'title' . $i
 		));
 	}
 
-	$template->output('common', array(
-		'body' => '{TEMPLATE_BODY}'
+	$template->output('main.tpl', array(
+		'list.tpl' => '{TEMPLATE_BODY}'
 	));
 
 ?>
