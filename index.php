@@ -10,7 +10,7 @@
 	for ($i = 1; $i <= 10; $i++) {
 		$template->blocks('LIST', array(
 			'ID' => $i,
-			'TITLE' => 'title' . $i
+			'TITLE' => 'title ' . $i
 		));
 	}
 
