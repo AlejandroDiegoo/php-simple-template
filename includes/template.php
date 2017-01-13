@@ -63,11 +63,29 @@
 
 		/**/
 		function output($main, $regions) {
+
+			$data = array(
+				$main => $main
+			);
+
+			$write = array();
+
+
+			while(list($regionFile, $regionLocation) = each($regions)) {
+
+				$data[$regionFile] = $regionFile;
+				$write[$regionFile] = $regionLocation;
+
+
+			}
+
+			$this->set($data);
+
 			/* Cargamos el template principal */
 			$mainCode = $this->load($main);
 			/* Cargamos todas las regiones y las incluimos
 			en el código del template principal */
-			while(list($region, $regionLocation) = each($regions)) {	
+			while(list($region, $regionLocation) = each($write)) {
 				$regionCode = $this->load($region);
 				$mainCode = str_replace($regionLocation, $regionCode, $mainCode);
 			}
