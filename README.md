@@ -25,9 +25,9 @@ Although we have already declared some variables in the assignment, we will be a
         'LIST_ERROR' => 'list error'
     ));
 
-### Lists
+### Blocks
 
-To create lists, you will have to enter a list name after the variable array. To access this information in the template, you'll have to loop the list using **{FOR LIST_NAME}** and within **{{LIST_NAME.ATTR_NAME}}**. To get the total number of records in a list, you only have to put the name of the list **{{LIST_NAME}}**.
+To create lists, you will have to enter a list name after the variable array. To access this information in the template, you'll have to scroll through the list using **{FOR LIST_NAME}** and within **{{LIST_NAME.ATTR_NAME}}**. To get the total number of records in a list, you only have to put the name of the list **{{LIST_NAME}}**.
 
     for ($i = 1; $i <= 10; $i++) {
 
