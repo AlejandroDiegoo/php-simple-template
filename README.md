@@ -1,83 +1,83 @@
 # php-simple-template
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, cuando un impresor (N. del T. persona que se dedica a la imprenta) desconocido usó una galería de textos y los mezcló de tal manera que logró hacer un libro de textos especimen.
+The Template engine allows to keep the HTML code in some external files which are completely free of PHP code. This way, it's possible keep logical programming (PHP code) away from visual structure. **Simple Template** allows you to easily load your HTML code through a template and insert templates into others.
 
 ### Require
 
-    require_once('template.php');
-    
+    require_once('simple.template.php');
+
 ### Assignment
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500.
+When assigning the class, we must indicate the path where our templates will be hosted. In addition we can indicate the first variables of our application.
 
-    $template = new Template('my-templates-path', array(
-        'PAGE_TITLE' => 'page title',
-        'PAGE_DESCRIPTION' => 'page description'
+    $template = new SimpleTemplate('templates/', array(
+        'PAGE_TITLE' => 'php-simple-template',
+        'PAGE_DESCRIPTION' => 'page description',
+        'PAGE_LANGUAGE' => 'en'
     ));
 
 ### Vars
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500
+Although we have already declared some variables in the assignment, we will be able to add more at any time (always before rendering). These will be added to those already indicated. To show them in the templates, you only need to write **{{VAR_NAME}}** within your template.
 
-    $template->vars(array(
+    $template->add(array(
         'LIST_TITLE' => 'list title',
         'LIST_ERROR' => 'list error'
     ));
-    
+
 ### Blocks
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500, INDEX  
+To create lists, you will have to enter a list name after the variable array. To access this information in the template, you'll have to scroll through the list using **{FOR LIST_NAME}** and within **{{LIST_NAME.ATTR_NAME}}**. To get the total number of records in a list, you only have to put the name of the list **{{LIST_NAME}}**.
 
     for ($i = 1; $i <= 10; $i++) {
-    
-        $template->blocks('LIST_NAME', array(
-            'ATTR_1' => 'list attr 1',
-            'ATTR_2' => 'list attr 2'
-        ));
-        
+
+        $template->add(array(
+            'ATTR_1' => 'item ' . $i . ' attr 1',
+            'ATTR_2' => 'item ' . $i . ' attr 2'
+        ), 'LIST_NAME');
+
     }
 
-### Output
+### Render
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500
+To render you will have to indicate a main template, and if you wish, also a collection of secondary templates with their position in the main template.
 
-    $template->output('main.tpl', array(
-        'header.tpl' => '{HEADER_HERE}',
-        'list.tpl' => '{LIST_HERE}'
+    $template->render('main.tpl', array(
+        'header.tpl' => '{{HEADER_HERE}}',
+        'list.tpl' => '{{LIST_HERE}}'
     ));
-    
+
 ### Templates
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500
-    
+In the main template you can define the entire HTML structure and insert other templates using the variables indicated in the rendering (**{{HEADER_HERE}}** and **{{LIST_HERE}}**).
+
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="{{PAGE_LANGUAGE}}">
         <head>
-            <title>{PAGE_TITLE}</title>
+            <title>{{PAGE_TITLE}}</title>
             <meta charset="utf-8" />
             <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-            <meta name="description" content="{PAGE_DESCRIPTION}">
+            <meta name="description" content="{{PAGE_DESCRIPTION}}">
         </head>
         <body>
             <header>
-                {HEADER_HERE}
+                {{HEADER_HERE}}
             </header>
-            <div id="content">
-                {LIST_HERE}
+            <div>
+                {{LIST_HERE}}
             </div>
         </body>
     </html>
 
-Lorem Ipsum es simplemente el texto de relleno de las imprentas y archivos de texto. Lorem Ipsum ha sido el texto de relleno estándar de las industrias desde el año 1500
-    
-    <h1>{LIST_TITLE}</h1>
-    { IF {LIST_NAME} }
+In addition to variable writing and using **{FOR LIST_NAME}** to navigate lists, you can use **{IF (var or condition)}** and **{ELSE}** to create conditions.
+
+    <h2>{{LIST_TITLE}}</h2>
+    {IF {{LIST_NAME}}}
         <ul>
-            { FOR LIST_NAME }
-                <li>{LIST_NAME.ATTR_1}</li>
-            { END FOR LIST_NAME }
+            {FOR LIST_NAME}
+                <li>{{LIST_NAME.ATTR_1}}</li>
+            {END FOR}
         </ul>
-    { ELSE }
-        {LIST_ERROR}
-    { END IF }
-    
+    {ELSE}
+        {{LIST_ERROR}}
+    {END IF}
