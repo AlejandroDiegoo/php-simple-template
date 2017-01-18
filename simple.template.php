@@ -128,7 +128,7 @@
 		
 		// Compiles the given string of code,
 		// and return the result in a string
-		function compile($code) {
+		private function compile($code) {
 
 			// Replace \ with \\ and then ' with \'.
 			$code = str_replace('\\', '\\\\', $code);
