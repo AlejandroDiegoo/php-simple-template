@@ -2,6 +2,8 @@
 
 The Template engine allows to keep the HTML code in some external files which are completely free of PHP code. This way, it's possible keep logical programming (PHP code) away from visual structure. **Simple Template** allows you to easily load your HTML code through a template and insert templates into others.
 
+**Demo:** https://codeluxestudio.com/github/php-simple-template/demo 
+
 ### Require
 
     require_once('simple.template.php');

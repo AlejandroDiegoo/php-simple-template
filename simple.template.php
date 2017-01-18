@@ -138,91 +138,41 @@
 			// Break it up into lines
 			$codeLines = explode("\n", $code);
 
-
-
-
-
-print_r($code);
-
-
-
-
-
-		$block_nesting_level = 0;
-		$block_names = array();
-		$block_names[0] = ".";
-
-
-
 			for ($i = 0; $i < sizeof($codeLines); $i++) {
 
 				$codeLines[$i] = chop($codeLines[$i]);
 
+				if (preg_match('#{IF (.*?)}#', $codeLines[$i], $m)) {
 
+					$ifCondition = str_replace('\' . ( isset', '( isset', $m[1]);
+					$ifCondition = str_replace(': \'\' ) . \'', ': \'\' )', $ifCondition);
 
+					$codeLines[$i] = "\n" . 'if (' . $ifCondition . ')';
+					$codeLines[$i] .= "\n" . '{';
 
+				} else if (preg_match('#{ELSE}#', $codeLines[$i], $m)) {
 
+					$codeLines[$i] = '} else {' . "\n";
 
+				} else if (preg_match('#{END IF}#', $codeLines[$i], $m)) {
 
-			if (preg_match('#{IF (.*?)}#', $codeLines[$i], $m)) {
+					$codeLines[$i] = '} // END IF';
 
-				$string = str_replace('\' . ( isset', '( isset', $m[1]);
-				$string = str_replace(': \'\' ) . \'', ': \'\' )', $string);
+				} else if (preg_match('#{FOR (.*?)}#', $codeLines[$i], $m)) {
 
-				$codeLines[$i] = "\n" . 'if (' . $string . ')';
-				$codeLines[$i] .= "\n" . '{';
+					$codeLines[$i] = '$_' . $m[1] . '_count = ( isset($this->data[\'' . $m[1] . '\']) ) ? ';
+					$codeLines[$i] .= 'sizeof($this->data[\'' . $m[1] . '\']) : 0;';
+					$codeLines[$i] .= "\n" . 'for ($_' . $m[1] . '_i = 0; $_' . $m[1] . '_i < $_';
+					$codeLines[$i] .= $m[1] . '_count; $_' . $m[1] . '_i++)';
+					$codeLines[$i] .= "\n" . '{';
 
-			} else if (preg_match('#{ELSE}#', $codeLines[$i], $m)) {
+				} else if (preg_match('#{END FOR}#', $codeLines[$i], $m)) {
 
-				$codeLines[$i] = '} else {' . "\n";
-
-			} else if (preg_match('#{END IF}#', $codeLines[$i], $m)) {
-
-				$codeLines[$i] = '} // END ';
-
-			} else if (preg_match('#{FOR (.*?)}#', $codeLines[$i], $m)) {
-				$n[0] = $m[0];
-				$n[1] = $m[1];
-
-
-					$block_nesting_level++;
-					$block_names[$block_nesting_level] = $m[1];
-					if ($block_nesting_level < 2)
-					{
-						// Block is not nested.
-						$codeLines[$i] = '$_' . $m[1] . '_count = ( isset($this->data[\'' . $m[1] . '\']) ) ? sizeof($this->data[\'' . $m[1] . '\']) : 0;';
-						$codeLines[$i] .= "\n" . 'for ($_' . $m[1] . '_i = 0; $_' . $m[1] . '_i < $_' . $m[1] . '_count; $_' . $m[1] . '_i++)';
-						$codeLines[$i] .= "\n" . '{';
-					}
-					else
-					{
-						// This block is nested.
-
-						// Generate a namespace string for this block.
-						$namespace = implode('.', $block_names);
-						// strip leading period from root level..
-						$namespace = substr($namespace, 2);
-						// Get a reference to the data array for this block that depends on the
-						// current indices of all parent blocks.
-						$varref = $this->generateVarReference($namespace);
-						// Create the for loop code to iterate over this block.
-						$codeLines[$i] = '$_' . $m[1] . '_count = ( isset(' . $varref . ') ) ? sizeof(' . $varref . ') : 0;';
-						$codeLines[$i] .= "\n" . 'for ($_' . $m[1] . '_i = 0; $_' . $m[1] . '_i < $_' . $m[1] . '_count; $_' . $m[1] . '_i++)';
-						$codeLines[$i] .= "\n" . '{';
-					}
-
-
-						} else if (preg_match('#{END FOR}#', $codeLines[$i], $m)) {
-
-							// We have the end of a block.
-							unset($block_names[$block_nesting_level]);
-							$block_nesting_level--;
-							$codeLines[$i] = '} // END ';
-
+					// We have the end of a block
+					$codeLines[$i] = '} // END FOR';
 
 				} else {
 
-					// to do
 					$codeLines[$i] = 'echo \'' . $codeLines[$i] . '\' . "\\n";';
 
 				}
