@@ -108,15 +108,18 @@
 		private function replaceVars($code) {
 
 			$varReferences = array();
-			preg_match_all('#\{\{(([a-z0-9\-_]+)\.)?([a-z0-9\-_]+)\}\}#is', $code, $varReferences);
+			preg_match_all('#\{\{(UCASE_)?(([a-z0-9\-_]+)\.)?([a-z0-9\-_]+)\}\}#is', $code, $varReferences);
 
-			for ($i = 0; $i < sizeof($varReferences[1]); $i++) {
+			for ($i = 0; $i < sizeof($varReferences[0]); $i++) {
 
-				$varReference = $this->getVarReference($varReferences[2][$i], $varReferences[3][$i], true);
+				$toUppperCase = ($varReferences[1][$i] == 'UCASE_') ? 'true' : 'false';
+
+				$varReference = $this->getVarReference($varReferences[3][$i], $varReferences[4][$i], true);
 
 				$newCode = '\' . ( isset(' . $varReference . ') && is_array( (' . $varReference . ') ) ? ';
-				$newCode .= 'sizeof(' . $varReference . ') : ( isset(' . $varReference . ') ) ? ';
-				$newCode .= $varReference . ' : \'\' ) . \'';
+				$newCode .= 'sizeof(' . $varReference . ') : ( isset(' . $varReference . ') ) ? ( ';
+				$newCode .= '(' . $toUppperCase . ') ? strtoupper(' . $varReference . ') : ';
+				$newCode .= $varReference . ' ) : \'\' ) . \'';
 
 				$code = str_replace($varReferences[0][$i], $newCode, $code);
 
